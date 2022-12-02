@@ -156,7 +156,7 @@ if __name__ == "__main__":
                     left.to_csv(filename_left, index=False, header = False, sep = "\n")
                     filename_par = "par_qpAdm_"+ outgroup + "_" + "_".join(list(left))
                     filename_log = "log_qpAdm_" + outgroup + "_" + "_".join(list(left))
-                    create_parfile(filename_left, filename_par, parfile)
+                    create_parfile(filename_left, filename_par, parfile, outgroup)
                     par_list.append(filename_par)
                     qpAdm_list_all.append("(qpAdm -p " + filename_par + " > " + filename_log + ") &")
                 else:
