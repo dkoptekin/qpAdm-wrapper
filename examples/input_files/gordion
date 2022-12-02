@@ -1,0 +1,8 @@
+	Target	Source1	Source2	Source3	Source4
+pop	Anatolia_Gordion_IA	Anatolia_Buyukkaya_EC	Iran_TepeAbdul_N	Levant_AinGhazal_N	EHG
+pop	NA	Anatolia_Barcin_CA	Iran_WezmehCave_N	NA	NA
+pop	NA	NA	Iran_GanjDareh_N	NA	NA
+model	Target	Source1	Source2	Source3	Source4
+model	Target	Source1	Source2	Source3	NA
+model	Target	Source1	Source2	Source4	NA
+model	Target	Source1	Source2	NA	NA
