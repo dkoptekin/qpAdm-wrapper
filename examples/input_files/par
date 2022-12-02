@@ -1,0 +1,9 @@
+genotypename: DS1.auto.geno
+snpname: DS1.auto.snp
+indivname: DS1.auto.ind
+popleft:  left
+popright: right
+summary: YES
+details: YES
+allsnps: YES
+inbreed: NO
