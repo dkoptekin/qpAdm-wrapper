@@ -180,7 +180,7 @@ if __name__ == "__main__":
             poplist_out.write("\n".join(poplist))
 
     elif args.read:
-        run_comb = open(("poplist_" + info), "r").readlines()
+        run_comb = open(("all_combination_" + info), "r").readlines()
         results = create_result_df(len(names), len(run_comb))
         results['outgroup'] = outgroup
         for l,log in enumerate(run_comb):
