@@ -48,6 +48,8 @@ The info file should be tab-separeted and can contain empty cells. However, empt
 ### softwares
 - [AdmixTools](https://github.com/DReichLab/AdmixTools)
 
+You could give Admixtools bin path by using ```--admixtools_path``` option. 
+
 ### python packages
 - numpy
 - pandas
@@ -83,6 +85,22 @@ The info file should be tab-separeted and can contain empty cells. However, empt
 ```bash
 ./qpAdm-wrapper.py -i gordion -p par -o Base12_CHG -ho chimp -t 80 
 ```
+The header of sbatch output file will be like below:
+
+```
+#!/bin/bash -l
+#SBATCH -J qpAdm 
+#SBATCH -p chimp # can be specified by -ho option
+#SBATCH -n 80 # can be specified by -t option
+#SBATCH -t 5-00:00:00
+#SBATCH -D ./  can be specified by --out_path option 
+#SBATCH -o slurm-%j-%N-%u.out
+#SBATCH -e slurm-%J-%N-%u.err
+export PATH=$PATH:/usr/local/sw/AdmixTools-7.0.2/bin/ # can be specified by --admixtools_path option
+```
+
+If your cluster uses different slurm configurations or specifies options differently, you can modify the ```create_sbatch``` function in the script. Or you should modify the sbatch output file manually. You can also create bash file as output and define options during submitting. For more detail you can check [slurm-sbatch](https://slurm.schedmd.com/sbatch.html) website.
+
 
 #### bash file as output
 
