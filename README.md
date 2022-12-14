@@ -118,4 +118,4 @@ To summarize results from all log files after qpAdm runs have finished
 
 This create the output file named ```results_poplist_gordion.txt``` 
 
-You can copy and paste results to the excel file in ```examples/output_files/qpAdm_results_template.xltx```, you can easily compare all results by checking ```feasible``` and ```z_eval``` columns.
+You can copy and paste results to the excel file in ```examples/output_files/qpAdm_results_template.xltx```, and easily compare all results by checking ```feasible``` and ```z_eval``` columns.
