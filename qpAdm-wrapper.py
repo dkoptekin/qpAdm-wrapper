@@ -169,7 +169,7 @@ if __name__ == "__main__":
                 create_sbatch(qpAdm_list_all, host, n_threads, outdir, adm_path, 0)
         if args.mode == "bash":
             if len(qpAdm_list_all) > n_threads:
-                [create_bash(qpAdm_list_all[no_run:no_run+n_threads],host, n_threads, outdir, adm_path, no_run) for no_run in range(0, len(qpAdm_list_all), n_threads)]
+                [create_bash(qpAdm_list_all[no_run:no_run+n_threads], n_threads, outdir, adm_path, no_run) for no_run in range(0, len(qpAdm_list_all), n_threads)]
             else:
                 create_bash(qpAdm_list_all, n_threads, outdir, adm_path, 0)
         parlist_filename = "all_run_" + info + "_" + host + "_t" + str(n_threads)
