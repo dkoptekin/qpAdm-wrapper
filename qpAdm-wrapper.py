@@ -1,8 +1,9 @@
 #!/usr/bin/env python3.8
 # -*- coding: utf-8 -*-
 
-# TODO -- run write part with poplist
-# TODO -- log file read --> function
+"""
+@author: Dilek Koptekin
+"""
 
 import pandas as pd
 import numpy as np
