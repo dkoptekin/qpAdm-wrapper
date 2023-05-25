@@ -201,22 +201,23 @@ if __name__ == "__main__":
                                 results.at[l,'pop4'] = log_file[no+5].rstrip('\n')
                     if 'best coefficients:' in res:
                         percent = res.split()[2:]
-                        results.at[l,'pop1_mixture'] = percent[0]
-                        results.at[l,'pop2_mixture'] = percent[1]
+                        results.at[l,'pop1_mixture'] = float(percent[0])
+                        results.at[l,'pop2_mixture'] = float(percent[1])
                         if len(log_pops) >= 4:
-                            results.at[l,'pop3_mixture'] = percent[2]
+                            results.at[l,'pop3_mixture'] = float(percent[2])
                             if len(log_pops) >= 5:
-                                results.at[l,'pop4_mixture'] = percent[3]
+                                results.at[l,'pop4_mixture'] = float(percent[3])
                     if 'std. errors:' in res:
                         std = res.split()[2:]
-                        results.at[l,'s.e_1'] = std[0]
-                        results.at[l,'s.e_2'] = std[1]
+                        results.at[l,'s.e_1'] = float(std[0])
+                        results.at[l,'s.e_2'] = float(std[1])
                         if len(log_pops) >= 4:
-                            results.at[l,'s.e_3'] = std[2]
+                            results.at[l,'s.e_3'] = float(std[2])
                             if len(log_pops) >= 5:
-                                results.at[l,'s.e_4'] = std[3]
+                                results.at[l,'s.e_4'] = float(std[3])
                     if 'full rank' in res:
-                        results.at[l,'p_value'] = log_file[no+2].split()[-1]
+                        results.at[l,'p_value'] = float(log_file[no+2].split()[-1])
+
 
         results['z_pop1'] = results['pop1_mixture'] / results['s.e_1']
         results['z_pop2'] = results['pop2_mixture'] / results['s.e_2']
