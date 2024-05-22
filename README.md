@@ -1,4 +1,4 @@
-# qpAdm-wrapper
+# qpAdm-wrapper (v.1.0.1)
 
 A wrapper to estimate admixture proportions using qpAdm implemented in [AdmixTools](https://github.com/DReichLab/AdmixTools)
 
