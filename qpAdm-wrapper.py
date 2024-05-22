@@ -3,6 +3,8 @@
 
 """
 @author: Dilek Koptekin
+21 May 2024
+added nested p-value info to output
 """
 
 import pandas as pd
@@ -12,6 +14,8 @@ import os
 import argparse
 
 def create_combinations(model, n_pops):
+    if n_pops == 2:
+        return pd.DataFrame(product(targets, sources[model[1]]))
     if n_pops == 3:
         return pd.DataFrame(product(targets,sources[model[1]], sources[model[2]]))
     if n_pops == 4:
@@ -48,9 +52,17 @@ def create_bash(run_list, n_threads, outputdir, admixtools_path, no):
         bash.write(bash_out)
 
 def create_result_df(n_col, n_row):
-    colnames = ['target', 'pop1', 'pop1_mixture', 's.e_1', 'z_pop1','pop2', 'pop2_mixture', 's.e_2', 'z_pop2','pop3', 'pop3_mixture', 's.e_3', 'z_pop3', 'pop4', 'pop4_mixture', 's.e_4', 'z_pop4', 'p_value', 'outgroup', 'feasible', 'z_eval',  'logfile_path']
+    colnames = ['target', 
+    'pop1', 'pop1_mixture', 's.e_1', 'z_pop1',
+    'pop2', 'pop2_mixture', 's.e_2', 'z_pop2',
+    'pop3', 'pop3_mixture', 's.e_3', 'z_pop3', 
+    'pop4', 'pop4_mixture', 's.e_4', 'z_pop4', 
+    'p_value', 'outgroup', 'feasible', 'nested_feasible', 
+    'submodels', 'submodels_pvalues', 'nested_pvalues','z_eval', 'logfile_path']
     results = pd.DataFrame(columns = colnames, index = range(n_row))
-    str_col = ['target', 'pop1', 'pop2', 'pop3', 'pop4', 'outgroup','feasible','z_eval', 'logfile_path']
+    str_col = ['target', 'pop1', 'pop2', 'pop3', 'pop4', 
+               'outgroup','feasible', 'nested_feasible', 
+               'submodels', 'submodels_pvalues', 'nested_pvalues','z_eval', 'logfile_path']
     int_col = results.columns.difference(str_col)
     results[int_col] = results[int_col].apply(pd.to_numeric)
     return results
@@ -90,6 +102,7 @@ if __name__ == "__main__":
     parser.add_argument("-t","--threads", dest='threads', default=1, type=int, help="")
     parser.add_argument("-ho","--host_name", dest='host', default="chimp", type=str, help="")
     parser.add_argument("--out_path", dest='output_path',  default="./", type=str)
+    parser.add_argument('-v', '--version', action='version', version='%(prog)s 1.0.1')
 
     args = parser.parse_args()
     info = args.info
@@ -190,35 +203,52 @@ if __name__ == "__main__":
             if os.path.isfile(log_name):
                 results.at[l,'logfile_path'] = os.path.join(os.getcwd(), log_name)
                 log_file = open(log_name,'r').readlines()
+                submodels = []
+                submodels_pvalues = []
+                nested_pvalues = []
                 for no, res in enumerate(log_file):
                     if 'left pops:' in res:
                         results.at[l,'target'] = log_file[no+1].rstrip('\n')
                         results.at[l,'pop1'] = log_file[no+2].rstrip('\n')
-                        results.at[l,'pop2'] = log_file[no+3].rstrip('\n')
-                        if len(log_pops) >= 4:
-                            results.at[l,'pop3'] = log_file[no+4].rstrip('\n')
-                            if len(log_pops) >= 5:
-                                results.at[l,'pop4'] = log_file[no+5].rstrip('\n')
+                        if len(log_pops) >= 3:
+                            results.at[l,'pop2'] = log_file[no+3].rstrip('\n')
+                            if len(log_pops) >= 4:
+                                results.at[l,'pop3'] = log_file[no+4].rstrip('\n')
+                                if len(log_pops) >= 5:
+                                    results.at[l,'pop4'] = log_file[no+5].rstrip('\n')
                     if 'best coefficients:' in res:
                         percent = res.split()[2:]
                         results.at[l,'pop1_mixture'] = float(percent[0])
-                        results.at[l,'pop2_mixture'] = float(percent[1])
-                        if len(log_pops) >= 4:
-                            results.at[l,'pop3_mixture'] = float(percent[2])
-                            if len(log_pops) >= 5:
-                                results.at[l,'pop4_mixture'] = float(percent[3])
+                        if len(log_pops) >= 3:
+                            results.at[l,'pop2_mixture'] = float(percent[1])
+                            if len(log_pops) >= 4:
+                                results.at[l,'pop3_mixture'] = float(percent[2])
+                                if len(log_pops) >= 5:
+                                    results.at[l,'pop4_mixture'] = float(percent[3])
                     if 'std. errors:' in res:
                         std = res.split()[2:]
                         results.at[l,'s.e_1'] = float(std[0])
-                        results.at[l,'s.e_2'] = float(std[1])
-                        if len(log_pops) >= 4:
-                            results.at[l,'s.e_3'] = float(std[2])
-                            if len(log_pops) >= 5:
-                                results.at[l,'s.e_4'] = float(std[3])
+                        if len(log_pops) >= 3:
+                            results.at[l,'s.e_2'] = float(std[1])
+                            if len(log_pops) >= 4:
+                                results.at[l,'s.e_3'] = float(std[2])
+                                if len(log_pops) >= 5:
+                                    results.at[l,'s.e_4'] = float(std[3])
                     if 'full rank' in res:
-                        results.at[l,'p_value'] = float(log_file[no+2].split()[-1])
-
-
+                        results.at[l,'p_value'] = round(float(log_file[no+2].split()[-1]),3)
+                    if 'best pat' in res:
+                        bestpat = res.split()[2:]
+                        if bestpat[0] == '0' * (len(log_pops) - 1) or bestpat[-1] == 'infeasible' or bestpat[-1] == 'nested':
+                            continue
+                        else:
+                            submodels.append(bestpat[0])
+                            submodels_pvalues.append(round(float(bestpat[1]),3))
+                            nested_pvalues.append(round(float(bestpat[-1]),3))
+                    results.at[l, 'submodels'] = ','.join(submodels)
+                    results.at[l, 'submodels_pvalues'] = ','.join(map(str, submodels_pvalues))
+                    results.at[l, 'nested_pvalues'] = ','.join(map(str, nested_pvalues))
+                    nested_feasible = 'YES' if any(filter(lambda x: x > 0.05, nested_pvalues)) else 'NO'
+                    results.at[l, 'nested_feasible'] = nested_feasible
         results['z_pop1'] = results['pop1_mixture'] / results['s.e_1']
         results['z_pop2'] = results['pop2_mixture'] / results['s.e_2']
         results['z_pop3'] = results['pop3_mixture'] / results['s.e_3']
